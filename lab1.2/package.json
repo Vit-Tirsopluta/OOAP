@@ -1,0 +1,10 @@
+{
+  "name": "ooap-lab1-2",
+  "version": "1.0.0",
+  "description": "Лабораторна №1. Варіант 2 — Proxy (Заступник)",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

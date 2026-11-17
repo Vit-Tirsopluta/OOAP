@@ -1,0 +1,68 @@
+@startuml class-diagram
+title Лабораторна №2. Builder: пакування подарункових наборів
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+class PackingMenu <<Client>> {
+  +run()
+}
+
+class PackingLine <<Director>> {
+  -pricePerKg : number
+  +pack(builder : BoxBuilder) : GiftBox
+}
+
+abstract class BoxBuilder <<Builder>> {
+  -pieces : Map<CandyType, number>
+  {abstract} +name : string
+  {abstract} +addLollipops()
+  {abstract} +addChocolates()
+  {abstract} +addWaffles()
+  {abstract} +addDragee()
+  +reset()
+  +putPieces(type : CandyType, pieces : number)
+  +getResult(pricePerKg : number) : GiftBox
+}
+
+class LasunkaBuilder <<ConcreteBuilder>>
+class NaminaikoBuilder <<ConcreteBuilder>>
+class PanKotskyBuilder <<ConcreteBuilder>>
+
+class GiftBox <<Product>> {
+  +name : string
+  +pricePerKg : number
+  -pieces : Map<CandyType, number>
+  +getPieces(type : CandyType) : number
+  +getWeightOf(type : CandyType) : number
+  +getWeight() : number
+  +getPrice() : number
+}
+
+class CandyType {
+  {static} +LOLLIPOP : CandyType
+  {static} +CHOCOLATE : CandyType
+  {static} +WAFFLE : CandyType
+  {static} +DRAGEE : CandyType
+  +title : string
+  +pieceWeight : number
+}
+
+PackingMenu --> "1" PackingLine : packingLine
+PackingMenu o--> "3" BoxBuilder : builders
+PackingMenu ..> GiftBox : показує
+PackingLine ..> BoxBuilder : керує кроками
+PackingLine ..> GiftBox : створює через builder
+BoxBuilder <|-- LasunkaBuilder
+BoxBuilder <|-- NaminaikoBuilder
+BoxBuilder <|-- PanKotskyBuilder
+BoxBuilder ..> GiftBox : <<create>>
+GiftBox o--> "4" CandyType : pieces
+BoxBuilder ..> CandyType
+
+note bottom of BoxBuilder
+  Кроки складання однакові для всіх наборів,
+  а кількості штук задають конкретні будівельники
+end note
+@enduml

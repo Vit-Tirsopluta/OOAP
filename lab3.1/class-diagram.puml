@@ -1,0 +1,69 @@
+@startuml class-diagram
+title Лабораторна №3. Singleton з ранньою ініціалізацією: лічильник продажів
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+left to right direction
+
+class SalesCounter <<Singleton>> {
+  {field} {static} -instance : SalesCounter = new SalesCounter()
+  {field} {static} -instanceCreated : boolean
+  -counts : Map<ProductGroup, number>
+  +totalCount : number
+  +totalCost : number
+  +logFile : string
+  +createdAt : Date
+  {static} +getInstance() : SalesCounter
+  +registerSale(product : Product, soldAt : Date)
+  +getCount(group : ProductGroup) : number
+  +readLog() : string
+}
+
+class CashRegister {
+  +title : string
+  +group : ProductGroup
+  +sell() : Product
+}
+
+class Product {
+  +name : string
+  +group : ProductGroup
+  +basePrice : number
+  {static} +random(group : ProductGroup) : Product
+  +getMarkup() : number
+  +getPrice() : number
+}
+
+class ProductGroup {
+  {static} +FOOD : ProductGroup
+  {static} +MEDICINE : ProductGroup
+  {static} +CLOTHING : ProductGroup
+  +title : string
+  +markupPercent : number
+  +priceRange : number[]
+  +productNames : string[]
+  {static} +values() : ProductGroup[]
+}
+
+class ShopMenu {
+  +run()
+}
+
+SalesCounter --> "1" SalesCounter : instance
+CashRegister ..> SalesCounter : getInstance()
+ShopMenu ..> SalesCounter : getInstance()
+ShopMenu o-- "3" CashRegister : registers
+CashRegister ..> Product : <<create>>
+CashRegister --> "1" ProductGroup : group
+Product --> "1" ProductGroup : group
+SalesCounter ..> Product : registerSale
+SalesCounter --> "3" ProductGroup : counts
+
+note bottom of SalesCounter
+  Рання ініціалізація: поле instance
+  заповнюється під час завантаження класу.
+  Повторний виклик конструктора
+  завершується помилкою.
+end note
+@enduml

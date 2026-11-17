@@ -1,0 +1,10 @@
+{
+  "name": "ooap-lab4",
+  "version": "1.0.0",
+  "description": "Лабораторна №4. Варіант 10 (завдання №4) — Bridge",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

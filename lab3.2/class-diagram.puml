@@ -1,0 +1,78 @@
+@startuml class-diagram
+title Лабораторна №3. Prototype: облік кімнат у гуртожитку
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+abstract class RoomPrototype <<Prototype>> {
+  +number : number
+  {abstract} +typeTitle : string
+  {abstract} +capacity : number
+  {abstract} +monthlyRent : number
+  {abstract} +clone() : RoomPrototype
+  +residents : Resident[]
+  +addResident(resident : Resident)
+  +isFull() : boolean
+  +getRentPerResident() : number
+  +copyResidentsTo(copy : RoomPrototype) : RoomPrototype
+}
+
+class DoubleRoom <<ConcretePrototype>> {
+  +clone() : RoomPrototype
+}
+
+class TripleRoom <<ConcretePrototype>> {
+  +clone() : RoomPrototype
+}
+
+class Dormitory <<Client>> {
+  -prototypes : Record<string, RoomPrototype>
+  -rooms : Map<number, RoomPrototype>
+  +typeOptions
+  +createRoom(typeKey, number) : RoomPrototype
+  +getRoom(number) : RoomPrototype
+  +checkIn(number, resident)
+  +rooms : RoomPrototype[]
+}
+
+class Resident {
+  +fullName : string
+  +birthDate : string
+  +faculty : string
+  +group : string
+  +studyForm : string
+  +clone() : Resident
+}
+
+class StudyForm <<enum>> {
+  {static} +STATE
+  {static} +PAID
+}
+
+class DormitoryMenu <<Client UI>> {
+  +run()
+}
+
+class ReportWriter <<utility>> {
+  {static} +buildRoomReport(room) : string
+  {static} +writeRoomReports(rooms, directory) : string[]
+}
+
+DoubleRoom --|> RoomPrototype
+TripleRoom --|> RoomPrototype
+Dormitory o-- "0..*" RoomPrototype : prototypes / rooms
+Dormitory ..> RoomPrototype : clone()
+RoomPrototype o-- "0..*" Resident : residents
+Resident ..> Resident : clone()
+Resident --> StudyForm
+DormitoryMenu --> Dormitory
+DormitoryMenu ..> ReportWriter
+ReportWriter ..> RoomPrototype
+
+note right of RoomPrototype
+  Зразки DoubleRoom і TripleRoom не заселяються.
+  Кімната = clone() зразка + номер + мешканці.
+  copyResidentsTo копіює мешканців, а не посилання.
+end note
+@enduml

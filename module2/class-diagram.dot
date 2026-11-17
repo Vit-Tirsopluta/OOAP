@@ -1,0 +1,96 @@
+// Діаграма класів: шаблон Bridge у calculator.js
+// PNG: dot -Tpng -Gdpi=150 class-diagram.dot -o class-diagram.png
+digraph Bridge {
+  graph [
+    fontname="DejaVu Sans", fontsize=16, labelloc=t,
+    label=<<B>Шаблон Bridge: калькулятор ціни замовлення</B><BR/> >,
+    nodesep=0.8, ranksep=0.9, pad=0.4, bgcolor=white
+  ];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#333333", fontcolor="#333333", arrowsize=0.9];
+
+  Client [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#eeeeee"><FONT POINT-SIZE="10">«Client»</FONT><BR/><B>Client</B><BR/><FONT POINT-SIZE="9">код верхнього рівня calculator.js</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">order: [id, quantity][]</TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">money(amount: number): string</TD></TR>
+    </TABLE>>];
+
+  OrderCalculator [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#d6e6fb"><FONT POINT-SIZE="10">«Abstraction»</FONT><BR/><B>OrderCalculator</B></TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ name: string</TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ OrderCalculator(impl: CalculatorImpl)<BR/>+ addItem(id: number, quantity: number): void<BR/>+ getGoodsPrice(): number<BR/>+ getDiscount(): number<BR/>+ getShippingPrice(): number<BR/>+ getTotal(): number</TD></TR>
+    </TABLE>>];
+
+  LoyaltyOrderCalculator [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#d6e6fb"><FONT POINT-SIZE="10">«RefinedAbstraction»</FONT><BR/><B>LoyaltyOrderCalculator</B></TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ percent: number</TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ LoyaltyOrderCalculator(impl: CalculatorImpl, percent: number)<BR/>+ getDiscount(): number</TD></TR>
+    </TABLE>>];
+
+  CalculatorImpl [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#d8f0dc"><FONT POINT-SIZE="10">«Implementor»</FONT><BR/><B><I>CalculatorImpl</I></B><BR/><FONT POINT-SIZE="9">{abstract}</FONT></TD></TR>
+      <TR><TD> </TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT"><I>+ getItemPrice(id: number): number<BR/>+ getShippingPrice(items: ItemInBOX[]): number</I></TD></TR>
+    </TABLE>>];
+
+  RetailCalculatorImpl [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#d8f0dc"><FONT POINT-SIZE="10">«ConcreteImplementor»</FONT><BR/><B>RetailCalculatorImpl</B></TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ name: string<BR/>+ prices: Object</TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getItemPrice(id: number): number<BR/>+ getShippingPrice(items: ItemInBOX[]): number</TD></TR>
+    </TABLE>>];
+
+  WholesaleCalculatorImpl [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#d8f0dc"><FONT POINT-SIZE="10">«ConcreteImplementor»</FONT><BR/><B>WholesaleCalculatorImpl</B></TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ name: string<BR/>+ prices: Object</TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getItemPrice(id: number): number<BR/>+ getShippingPrice(items: ItemInBOX[]): number</TD></TR>
+    </TABLE>>];
+
+  ItemInBOX [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#fbeecb"><B>ItemInBOX</B></TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ Id: number<BR/>+ Quantity: number<BR/>+ Price: number</TD></TR>
+      <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ ItemInBOX(id: number, quantity: number, price: number)</TD></TR>
+    </TABLE>>];
+
+  // Розташування: ItemInBOX угорі, Client унизу, обидві ієрархії посередині.
+  // Ребра, що мали б іти вгору, записані у зворотному напрямку з dir=back.
+  { rank=same; OrderCalculator; CalculatorImpl; }
+  { rank=same; LoyaltyOrderCalculator; RetailCalculatorImpl; WholesaleCalculatorImpl; }
+
+  // Узагальнення (успадкування)
+  OrderCalculator -> LoyaltyOrderCalculator [dir=back, arrowtail=empty];
+  CalculatorImpl -> RetailCalculatorImpl [dir=back, arrowtail=empty];
+  CalculatorImpl -> WholesaleCalculatorImpl [dir=back, arrowtail=empty];
+
+  // Міст: агрегація абстракції з реалізацією
+  OrderCalculator -> CalculatorImpl [
+    dir=both, arrowtail=odiamond, arrowhead=vee, penwidth=2,
+    xlabel=<<B>міст</B>>, headlabel="impl  1", taillabel="0..*",
+    labeldistance=3, labelangle=-20
+  ];
+
+  // Композиція: позиції кошика створює і зберігає калькулятор
+  ItemInBOX -> OrderCalculator [
+    dir=both, arrowtail=vee, arrowhead=diamond,
+    taillabel="items  0..*", headlabel="1",
+    labeldistance=2.5, labelangle=30
+  ];
+
+  // Залежність: реалізація отримує позиції кошика параметром
+  ItemInBOX -> CalculatorImpl [dir=back, style=dashed, arrowtail=vee, label="«use»"];
+
+  // Клієнт створює об'єкти і працює через абстракцію
+  OrderCalculator -> Client [dir=back, style=dashed, arrowtail=vee, label="«create»\n«use»"];
+  LoyaltyOrderCalculator -> Client [dir=back, style=dashed, arrowtail=vee, label="«create»"];
+  RetailCalculatorImpl -> Client [dir=back, style=dashed, arrowtail=vee, label="«create»"];
+  WholesaleCalculatorImpl -> Client [dir=back, style=dashed, arrowtail=vee, label="«create»"];
+
+  // Порядок вузлів у нижньому ряду класів
+  LoyaltyOrderCalculator -> RetailCalculatorImpl -> WholesaleCalculatorImpl [style=invis];
+}

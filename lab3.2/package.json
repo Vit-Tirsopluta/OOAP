@@ -1,0 +1,10 @@
+{
+  "name": "ooap-lab3-2",
+  "version": "1.0.0",
+  "description": "Лабораторна №3. Варіант 5 — Prototype (облік кімнат у гуртожитку)",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

@@ -1,0 +1,97 @@
+@startuml class-diagram
+title Лабораторна №2. Abstract Factory: ювелірний каталог
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+abstract class JewelryFactory <<AbstractFactory>> {
+  {abstract} +title : string
+  {abstract} +metal : Metal
+  {abstract} +createEarrings(model) : Earrings
+  {abstract} +createRing(model) : Ring
+  {abstract} +createChain(model) : Chain
+  {abstract} +createPendant(model) : Pendant
+  {abstract} +createBracelet(model) : Bracelet
+  +createItem(model) : Jewelry
+}
+
+class GoldJewelryFactory <<ConcreteFactory>> {
+  +title : string
+  +metal : Metal
+  +createEarrings(model) : Earrings
+  +createRing(model) : Ring
+  +createChain(model) : Chain
+  +createPendant(model) : Pendant
+  +createBracelet(model) : Bracelet
+}
+
+class SilverJewelryFactory <<ConcreteFactory>> {
+  +title : string
+  +metal : Metal
+  +createEarrings(model) : Earrings
+  +createRing(model) : Ring
+  +createChain(model) : Chain
+  +createPendant(model) : Pendant
+  +createBracelet(model) : Bracelet
+}
+
+abstract class Jewelry <<AbstractProduct>> {
+  +model : JewelryModel
+  +metal : Metal
+  +kind : string
+  +getMetalCost() : number
+  +getLaborCost() : number
+  +getPrice() : number
+}
+
+class Earrings <<ConcreteProduct>>
+class Ring <<ConcreteProduct>>
+class Chain <<ConcreteProduct>>
+class Pendant <<ConcreteProduct>>
+class Bracelet <<ConcreteProduct>>
+
+class Metal {
+  {static} +GOLD : Metal
+  {static} +SILVER : Metal
+  +title : string
+  +pricePerGram : number
+}
+
+class JewelryModel {
+  +name : string
+  +kind : string
+  +weightGrams : number
+  +complexity : number
+}
+
+class CatalogMenu <<Client>> {
+  +run()
+}
+
+JewelryFactory <|-- GoldJewelryFactory
+JewelryFactory <|-- SilverJewelryFactory
+Jewelry <|-- Earrings
+Jewelry <|-- Ring
+Jewelry <|-- Chain
+Jewelry <|-- Pendant
+Jewelry <|-- Bracelet
+
+GoldJewelryFactory ..> Earrings : <<create>>
+GoldJewelryFactory ..> Ring : <<create>>
+GoldJewelryFactory ..> Chain : <<create>>
+GoldJewelryFactory ..> Pendant : <<create>>
+GoldJewelryFactory ..> Bracelet : <<create>>
+SilverJewelryFactory ..> Earrings : <<create>>
+SilverJewelryFactory ..> Ring : <<create>>
+SilverJewelryFactory ..> Chain : <<create>>
+SilverJewelryFactory ..> Pendant : <<create>>
+SilverJewelryFactory ..> Bracelet : <<create>>
+
+Jewelry --> "1" Metal : metal
+Jewelry --> "1" JewelryModel : model
+JewelryFactory --> "1" Metal : metal
+CatalogMenu --> "1..*" JewelryFactory : factories
+CatalogMenu ..> JewelryModel : catalog
+CatalogMenu ..> Jewelry : показує
+@enduml

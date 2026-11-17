@@ -1,0 +1,89 @@
+@startuml class-diagram
+title Лабораторна №1. Proxy: колекція книг
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+interface BookCollection {
+  {abstract} +add(book : Book)
+  {abstract} +findByAuthor(author : string) : Book[]
+  {abstract} +remove(book : Book) : boolean
+  {abstract} +getAll() : Book[]
+  {abstract} +size : number
+}
+
+class BookList <<RealSubject>> {
+  -books : Book[]
+  +add(book : Book)
+  +findByAuthor(author : string) : Book[]
+  +remove(book : Book) : boolean
+  +getAll() : Book[]
+  +size : number
+}
+
+class BookCollectionProxy <<Proxy>> {
+  -realCollection : BookCollection
+  -user : User
+  -log : AccessLog
+  +add(book : Book)
+  +findByAuthor(author : string) : Book[]
+  +remove(book : Book) : boolean
+  +getAll() : Book[]
+  +size : number
+  -checkAccess(operation : string, details : string)
+}
+
+class Book {
+  +title : string
+  +author : string
+  +year : number
+  +toString() : string
+}
+
+class User {
+  +name : string
+  +role : Role
+  +can(operation : string) : boolean
+}
+
+class Role {
+  {static} +READER : Role
+  {static} +LIBRARIAN : Role
+  +title : string
+  +permissions : string[]
+}
+
+class AccessLog {
+  -entries : object[]
+  +record(user : User, operation : string, details : string, allowed : boolean)
+  +entries : object[]
+}
+
+class AccessDeniedError
+
+class LibraryMenu <<Client>> {
+  -collection : BookCollection
+  -user : User
+  +run()
+}
+
+BookCollection <|.. BookList
+BookCollection <|.. BookCollectionProxy
+BookCollectionProxy o-right-> "1" BookCollection : realCollection
+BookList o-- "0..*" Book : books
+BookCollectionProxy --> "1" User : user
+BookCollectionProxy --> "1" AccessLog : log
+BookCollectionProxy ..> AccessDeniedError : <<throw>>
+User --> "1" Role : role
+LibraryMenu --> "1" BookCollection : collection
+LibraryMenu ..> Book : <<create>>
+LibraryMenu --> "1..*" User : users
+LibraryMenu --> "1" AccessLog : log
+Error <|-- AccessDeniedError
+
+note bottom of BookCollectionProxy
+  Перевіряє права користувача, пише журнал
+  і лише тоді делегує виклик BookList
+end note
+@enduml

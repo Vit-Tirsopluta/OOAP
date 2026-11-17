@@ -1,0 +1,95 @@
+@startuml class-diagram
+title Лабораторна №4. Bridge: бухгалтерія
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+class Accounting {
+  +companyName : string
+  +employees : Employee[]
+  +hire(employee : Employee)
+  +issueSalary(employee : Employee) : Payslip
+  +issuePayroll() : Payslip[]
+}
+
+abstract class Employee {
+  +fullName : string
+  {abstract} +position : string
+  {abstract} +workUnit : string
+  +bonusPercent : number
+  +bonusReason : string
+  +paymentForm : PaymentForm
+  +workReport : WorkReport
+  +setPaymentForm(paymentForm : PaymentForm)
+  +submitWork(workReport : WorkReport)
+  +calculateSalary() : Payslip
+}
+
+class Programmer {
+  +level : string
+}
+
+class Turner {
+  +grade : number
+}
+
+class Translator {
+  +languages : string[]
+}
+
+abstract class PaymentForm {
+  {abstract} +title : string
+  {abstract} +tariff : string
+  {abstract} +calculateEarnings(workReport : WorkReport) : number
+  {abstract} +describeEarnings(workReport : WorkReport) : string
+}
+
+class HourlyPayment {
+  +hourlyRate : number
+}
+
+class PieceworkPayment {
+  +unitPrice : number
+}
+
+class WorkReport {
+  +hoursWorked : number
+  +unitsDone : number
+}
+
+class Payslip {
+  +employeeName : string
+  +position : string
+  +paymentTitle : string
+  +earningsDetails : string
+  +earnings : number
+  +bonusPercent : number
+  +bonusReason : string
+  +bonus : number
+  +total : number
+}
+
+Employee <|-- Programmer
+Employee <|-- Turner
+Employee <|-- Translator
+PaymentForm <|-- HourlyPayment
+PaymentForm <|-- PieceworkPayment
+
+Employee o-right- "1" PaymentForm : paymentForm
+Employee o-- "1" WorkReport : workReport
+Employee ..> Payslip : <<create>>
+PaymentForm ..> WorkReport
+Accounting o-- "0..*" Employee : employees
+
+note top of Employee
+  Abstraction: calculateSalary() бере
+  нарахування у paymentForm і додає
+  надбавку професії
+end note
+
+note top of PaymentForm
+  Implementor: примітивні операції
+  нарахування за табелем
+end note
+@enduml

@@ -1,0 +1,63 @@
+@startuml class-diagram
+title Лабораторна №4. Adapter: Skype з відеокамерою
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+interface Phone <<Target>> {
+  {abstract} +makeCall(contact : string) : string
+}
+
+abstract class VideoPhone {
+  {abstract} +makeVideoCall(contact : string, camera : Camera) : string
+}
+
+class Skype <<Client>> {
+  -calls : object[]
+  +makeCall(contact : string) : string
+  +makeVideoCall(contact : string, camera : Camera) : string
+  +calls : object[]
+}
+
+abstract class Camera <<Target>> {
+  {abstract} +captureFrame() : Frame
+}
+
+class CameraAdapter <<Adapter>> {
+  -videoCamera : VideoCamera
+  +captureFrame() : Frame
+}
+
+class VideoCamera <<Adaptee>> {
+  -model : string
+  +shoot() : object
+}
+
+class Frame {
+  +width : number
+  +height : number
+  +pixels : string
+}
+
+class SkypeMenu <<UI>> {
+  +run()
+}
+
+Phone <|.. VideoPhone
+VideoPhone <|-- Skype
+Camera <|-- CameraAdapter
+CameraAdapter o--> "1" VideoCamera : adaptee
+Skype ..> Camera : приймає
+CameraAdapter ..> Frame : створює
+Camera ..> Frame : повертає
+SkypeMenu --> "1" Skype : skype
+SkypeMenu --> "1" VideoCamera : camera
+SkypeMenu ..> CameraAdapter : створює
+
+note bottom of CameraAdapter
+  Переводить виклик captureFrame()
+  у shoot() і сирі дані у Frame.
+  Сама VideoCamera не змінюється.
+end note
+@enduml

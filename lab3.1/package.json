@@ -1,0 +1,10 @@
+{
+  "name": "ooap-lab3",
+  "version": "1.0.0",
+  "description": "Лабораторна №3. Варіант 10 (завдання №4) — Singleton з ранньою ініціалізацією",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

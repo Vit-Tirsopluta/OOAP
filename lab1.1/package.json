@@ -1,0 +1,10 @@
+{
+  "name": "ooap-lab1",
+  "version": "1.0.0",
+  "description": "Лабораторна №1. Варіант 1 — Delegation",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

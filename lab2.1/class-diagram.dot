@@ -1,0 +1,79 @@
+// Діаграма класів для class-diagram.png (Graphviz):
+//   dot -Tpng class-diagram.dot -o class-diagram.png
+// Зміст той самий, що й у class-diagram.puml.
+digraph AbstractFactory {
+  graph [label="Лабораторна №2. Abstract Factory: ювелірний каталог", labelloc=t, fontname="Sans Bold", fontsize=16,
+         rankdir=TB, nodesep=0.4, ranksep=0.8, pad=0.3, bgcolor=white];
+  node  [shape=plain, fontname="Sans", fontsize=11];
+  edge  [fontname="Sans", fontsize=10, labeldistance=2.0, labelangle=25];
+
+  JewelryFactory [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef3fb">
+      <tr><td><i>«AbstractFactory»</i><br/><b><i>JewelryFactory</i></b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><i>+title : string</i><br/><i>+metal : Metal</i></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><i>+createEarrings(model)</i><br/><i>+createRing(model)</i><br/><i>+createChain(model)</i><br/><i>+createPendant(model)</i><br/><i>+createBracelet(model)</i><br/>+createItem(model) : Jewelry</td></tr>
+    </table>>];
+
+  GoldJewelryFactory [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff6e0">
+      <tr><td><i>«ConcreteFactory»</i><br/><b>GoldJewelryFactory</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+title : "Золото"<br/>+metal : Metal.GOLD</td></tr>
+    </table>>];
+
+  SilverJewelryFactory [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff6e0">
+      <tr><td><i>«ConcreteFactory»</i><br/><b>SilverJewelryFactory</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+title : "Срібло"<br/>+metal : Metal.SILVER</td></tr>
+    </table>>];
+
+  Jewelry [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef3fb">
+      <tr><td><i>«AbstractProduct»</i><br/><b><i>Jewelry</i></b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+model : JewelryModel<br/>+metal : Metal<br/>+kind : string</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+getMetalCost() : number<br/>+getLaborCost() : number<br/>+getPrice() : number</td></tr>
+    </table>>];
+
+  Earrings [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5"><tr><td><i>«ConcreteProduct»</i><br/><b>Earrings</b></td></tr></table>>];
+  Ring [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5"><tr><td><i>«ConcreteProduct»</i><br/><b>Ring</b></td></tr></table>>];
+  Chain [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5"><tr><td><i>«ConcreteProduct»</i><br/><b>Chain</b></td></tr></table>>];
+  Pendant [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5"><tr><td><i>«ConcreteProduct»</i><br/><b>Pendant</b></td></tr></table>>];
+  Bracelet [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5"><tr><td><i>«ConcreteProduct»</i><br/><b>Bracelet</b></td></tr></table>>];
+
+  Metal [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fbeeee">
+      <tr><td><b>Metal</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><u>+GOLD : Metal</u><br/><u>+SILVER : Metal</u><br/>+title : string<br/>+pricePerGram : number</td></tr>
+    </table>>];
+
+  JewelryModel [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5">
+      <tr><td><b>JewelryModel</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+name : string<br/>+kind : string<br/>+weightGrams : number<br/>+complexity : number</td></tr>
+    </table>>];
+
+  CatalogMenu [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ea">
+      <tr><td><i>«Client»</i><br/><b>CatalogMenu</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+run()</td></tr>
+    </table>>];
+
+  { rank=same; GoldJewelryFactory; SilverJewelryFactory; }
+  { rank=same; Earrings; Ring; Chain; Pendant; Bracelet; }
+
+  JewelryFactory -> GoldJewelryFactory [dir=back, arrowtail=onormal];
+  JewelryFactory -> SilverJewelryFactory [dir=back, arrowtail=onormal];
+  Jewelry -> Earrings [dir=back, arrowtail=onormal];
+  Jewelry -> Ring [dir=back, arrowtail=onormal];
+  Jewelry -> Chain [dir=back, arrowtail=onormal];
+  Jewelry -> Pendant [dir=back, arrowtail=onormal];
+  Jewelry -> Bracelet [dir=back, arrowtail=onormal];
+
+  GoldJewelryFactory -> Earrings [arrowhead=vee, style=dashed, label="«create»"];
+  SilverJewelryFactory -> Bracelet [arrowhead=vee, style=dashed, label="«create»"];
+
+  Jewelry -> Metal [arrowhead=vee, label="metal", headlabel="1"];
+  Jewelry -> JewelryModel [arrowhead=vee, label="model", headlabel="1"];
+  JewelryFactory -> Metal [arrowhead=vee, style=dashed, label="metal"];
+  CatalogMenu -> JewelryFactory [arrowhead=vee, label="factories", headlabel="1..*"];
+  CatalogMenu -> JewelryModel [arrowhead=vee, style=dashed, label="catalog"];
+}

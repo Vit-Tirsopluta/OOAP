@@ -1,0 +1,74 @@
+// Діаграма класів для class-diagram.png (Graphviz):
+//   dot -Tpng class-diagram.dot -o class-diagram.png
+// Зміст той самий, що й у class-diagram.puml.
+digraph Prototype {
+  graph [label="Лабораторна №3. Prototype: облік кімнат у гуртожитку", labelloc=t, fontname="Sans Bold", fontsize=16,
+         rankdir=TB, nodesep=0.5, ranksep=0.9, pad=0.3, bgcolor=white];
+  node  [shape=plain, fontname="Sans", fontsize=11];
+  edge  [fontname="Sans", fontsize=10, labeldistance=2.0, labelangle=25];
+
+  RoomPrototype [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef3fb">
+      <tr><td><i>«Prototype»</i><br/><b><i>RoomPrototype</i></b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+number : number</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><i>+typeTitle : string</i><br/><i>+capacity : number</i><br/><i>+monthlyRent : number</i><br/><i>+clone() : RoomPrototype</i><br/>+residents : Resident[]<br/>+addResident(resident)<br/>+isFull() : boolean<br/>+getRentPerResident() : number<br/>+copyResidentsTo(copy)</td></tr>
+    </table>>];
+
+  DoubleRoom [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff6e0">
+      <tr><td><i>«ConcretePrototype»</i><br/><b>DoubleRoom</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+typeTitle "двомісна"<br/>+capacity 2<br/>+monthlyRent 1200<br/>+clone()</td></tr>
+    </table>>];
+
+  TripleRoom [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff6e0">
+      <tr><td><i>«ConcretePrototype»</i><br/><b>TripleRoom</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+typeTitle "трьохмісна"<br/>+capacity 3<br/>+monthlyRent 1500<br/>+clone()</td></tr>
+    </table>>];
+
+  Dormitory [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ea">
+      <tr><td><i>«Client»</i><br/><b>Dormitory</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">-prototypes : Record&lt;string, RoomPrototype&gt;<br/>-rooms : Map&lt;number, RoomPrototype&gt;</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+typeOptions<br/>+createRoom(typeKey, number)<br/>+getRoom(number)<br/>+checkIn(number, resident)<br/>+rooms</td></tr>
+    </table>>];
+
+  Resident [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5">
+      <tr><td><b>Resident</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+fullName : string<br/>+birthDate : string<br/>+faculty : string<br/>+group : string<br/>+studyForm : string</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+clone() : Resident</td></tr>
+    </table>>];
+
+  StudyForm [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5">
+      <tr><td><i>«enum»</i><br/><b>StudyForm</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><u>+STATE</u><br/><u>+PAID</u></td></tr>
+    </table>>];
+
+  DormitoryMenu [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ea">
+      <tr><td><i>«Client UI»</i><br/><b>DormitoryMenu</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+run()</td></tr>
+    </table>>];
+
+  ReportWriter [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5">
+      <tr><td><i>«utility»</i><br/><b>ReportWriter</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+buildRoomReport(room) : string<br/>+writeRoomReports(rooms, dir) : string[]</td></tr>
+    </table>>];
+
+  { rank=same; DoubleRoom; TripleRoom; }
+
+  RoomPrototype -> DoubleRoom [dir=back, arrowtail=onormal];
+  RoomPrototype -> TripleRoom [dir=back, arrowtail=onormal];
+
+  Dormitory -> RoomPrototype [arrowhead=vee, arrowtail=odiamond, dir=both, label="prototypes / rooms", headlabel="0..*"];
+  Dormitory -> RoomPrototype [arrowhead=vee, style=dashed, label="clone()"];
+  RoomPrototype -> Resident [arrowhead=vee, arrowtail=odiamond, dir=both, label="residents", headlabel="0..*"];
+  Resident -> Resident [arrowhead=vee, style=dashed, label="clone()"];
+  Resident -> StudyForm [arrowhead=vee, label="studyForm"];
+  DormitoryMenu -> Dormitory [arrowhead=vee, label="dormitory"];
+  DormitoryMenu -> ReportWriter [arrowhead=vee, style=dashed];
+  ReportWriter -> RoomPrototype [arrowhead=vee, style=dashed];
+}

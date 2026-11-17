@@ -1,0 +1,71 @@
+// Діаграма класів для class-diagram.png (Graphviz):
+//   dot -Tpng class-diagram.dot -o class-diagram.png
+// Зміст той самий, що й у class-diagram.puml.
+digraph Adapter {
+  graph [label="Лабораторна №4. Adapter: Skype з відеокамерою", labelloc=t, fontname="Sans Bold", fontsize=16,
+         rankdir=TB, nodesep=0.5, ranksep=0.9, pad=0.3, bgcolor=white];
+  node  [shape=plain, fontname="Sans", fontsize=11];
+  edge  [fontname="Sans", fontsize=10, labeldistance=2.0, labelangle=25];
+
+  Phone [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef3fb">
+      <tr><td><i>«interface»</i><br/><b><i>Phone</i></b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><i>+makeCall(contact) : string</i></td></tr>
+    </table>>];
+
+  VideoPhone [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5">
+      <tr><td><b><i>VideoPhone</i></b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><i>+makeVideoCall(contact, camera) : string</i></td></tr>
+    </table>>];
+
+  Skype [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ea">
+      <tr><td><i>«Client»</i><br/><b>Skype</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">-calls : object[]</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+makeCall(contact) : string<br/>+makeVideoCall(contact, camera) : string<br/>+calls</td></tr>
+    </table>>];
+
+  Camera [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef3fb">
+      <tr><td><i>«Target»</i><br/><b><i>Camera</i></b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left"><i>+captureFrame() : Frame</i></td></tr>
+    </table>>];
+
+  CameraAdapter [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff6e0">
+      <tr><td><i>«Adapter»</i><br/><b>CameraAdapter</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">-videoCamera : VideoCamera</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+captureFrame() : Frame</td></tr>
+    </table>>];
+
+  VideoCamera [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fbeeee">
+      <tr><td><i>«Adaptee»</i><br/><b>VideoCamera</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">-model : string</td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+shoot() : object</td></tr>
+    </table>>];
+
+  Frame [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5">
+      <tr><td><b>Frame</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+width : number<br/>+height : number<br/>+pixels : string</td></tr>
+    </table>>];
+
+  SkypeMenu [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ea">
+      <tr><td><i>«UI»</i><br/><b>SkypeMenu</b></td></tr>
+      <tr><td border="1" sides="T" align="left" balign="left">+run()</td></tr>
+    </table>>];
+
+  Phone -> VideoPhone [dir=back, arrowtail=onormal, style=dashed];
+  VideoPhone -> Skype [dir=back, arrowtail=onormal];
+  Camera -> CameraAdapter [dir=back, arrowtail=onormal];
+
+  CameraAdapter -> VideoCamera [arrowhead=vee, arrowtail=odiamond, dir=both, label="adaptee", headlabel="1"];
+  Skype -> Camera [arrowhead=vee, style=dashed, label="приймає"];
+  CameraAdapter -> Frame [arrowhead=vee, style=dashed, label="створює"];
+  SkypeMenu -> Skype [arrowhead=vee, label="skype", headlabel="1"];
+  SkypeMenu -> VideoCamera [arrowhead=vee, label="camera", headlabel="1"];
+  SkypeMenu -> CameraAdapter [arrowhead=vee, style=dashed, label="«create»"];
+}

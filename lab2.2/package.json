@@ -1,0 +1,10 @@
+{
+  "name": "ooap-lab2-2",
+  "version": "1.0.0",
+  "description": "Лабораторна №2. Варіант 2 — Builder (пакування подарункових наборів цукерок)",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}
